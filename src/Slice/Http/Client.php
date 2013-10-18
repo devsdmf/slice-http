@@ -518,7 +518,16 @@ class Client
 		# Initializing Request
 		$ch = curl_init();
 		curl_setopt_array($ch, $this->curlOpts);
+		
+		# Performing Request
 		$response = curl_exec($ch);
+		
+		# Verifying if request was successfully executed.
+		if (!$response) {
+			throw new RuntimeException('cURL Request Error: ' . curl_errno($ch));
+		}
+		
+		# Closing handle
 		curl_close($ch);
 		
 		# Generating response
