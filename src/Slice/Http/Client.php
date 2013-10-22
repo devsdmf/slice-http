@@ -105,6 +105,12 @@ class Client
 	protected $dataRaw;
 	
 	/**
+	 * Files to send in request
+	 * @var array
+	 */
+	protected $files = array();
+	
+	/**
 	 * HTTP protocol version to use in request
 	 * @var integer
 	 */
@@ -374,6 +380,52 @@ class Client
 	}
 	
 	/**
+	 * Set files for send in request
+	 * 
+	 * @param string|array $file
+	 * @param string $name
+	 * @return \Slice\Http\Client
+	 */
+	public function setFiles($file, $name = null)
+	{
+		// Verifying if is array
+		if (is_array($file)) {
+			foreach ($file as $k => $v) {
+				$this->setFiles($v,$k);
+			}
+		} else {
+			$parray = &$this->files;
+			
+			if (file_exists($file)) {
+				if (is_null($file)) {
+					if (isset($parray[$name])) unset($parray[$name]);
+				} else {
+					if (is_null($name) || is_integer($name)) {
+						$count = count($parray);
+						$name = 'file_contents_' . $count;
+					}
+						
+					$parray[$name] = $file;
+				}
+			} else {
+				throw new RuntimeException('Invalid file, file not exists.');
+			}	
+		}
+		
+		return $this;
+	}
+	
+	/**
+	 * Get the files
+	 * 
+	 * @return array
+	 */
+	public function getFiles()
+	{
+		return $this->files;
+	}
+	
+	/**
 	 * Set HTTP protocol version for request
 	 * 
 	 * @param integer $version
@@ -478,8 +530,19 @@ class Client
 				if ($this->useRawData) {
 					$this->setCurlOpts(CURLOPT_POSTFIELDS, $this->dataRaw);
 				} else {
-					$data = http_build_query($this->paramsPost);
-					$this->setCurlOpts(CURLOPT_POSTFIELDS, $data);
+					// Verifying if has files to send
+					if (count($this->files) > 0) {
+						foreach ($this->files as $k => $v) {
+							// Verifying if PHP version is over 5.4
+							if (PHP_VERSION_ID < 50500) {
+								$this->setParameterPost($k, "@$v");
+							} else {
+								$cFile = new CURLFile($v,mime_content_type($v),$k);
+								$this->setParameterPost($k, $cFile);
+							}
+						} 
+					}
+					$this->setCurlOpts(CURLOPT_POSTFIELDS, $this->paramsPost);
 				}
 				break;
 			case 'PUT' : 
