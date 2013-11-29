@@ -2,3 +2,4 @@
 .project
 .settings/*
 tests/*
+.DS_Store
