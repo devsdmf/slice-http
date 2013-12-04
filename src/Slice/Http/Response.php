@@ -30,7 +30,7 @@ use Slice\Http\ResponseAbstract;
  * A thin PHP Library for perform HTTP requests using CURL library.
  * This library is based on Zend_Http component of Zend Framework 1.
  * 
- * This is the Response class for provides an object with HTTP response.
+ * This is the Abstract Response class for provides an object with HTTP response.
  *
  * @package Slice
  * @subpackage Http
