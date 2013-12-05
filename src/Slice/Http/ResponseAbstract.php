@@ -550,7 +550,7 @@ abstract class ResponseAbstract
 	{
 		$parts = preg_split('|(?:\r?\n){2}|m', $response_str, 2);
 		if (isset($parts[1])) {
-			return $parts[1];
+			return trim($parts[1]);
 		}
 		return '';
 	}
