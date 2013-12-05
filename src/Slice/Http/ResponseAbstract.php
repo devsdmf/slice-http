@@ -656,6 +656,11 @@ abstract class ResponseAbstract
 		$version = self::extractVersion($response);
 		$message = self::extractMessage($response);
 		
+		# FIX FOR MULTIPLE HTTP RESPONSE CODE RETURNED BY SERVER 
+		if ($code === 100 && count($headers) === 0 && self::extractCode($body)) {
+			return self::fromString($body);
+		}
+		
 		return new Response($code, $headers, $body, $version, $message);
 	}
 }
