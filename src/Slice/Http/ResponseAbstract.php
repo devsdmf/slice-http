@@ -561,7 +561,7 @@ abstract class ResponseAbstract
 	 * @param string $body
 	 * @return string
 	 */
-	public static function decodeChuckedBody($body)
+	public static function decodeChunckedBody($body)
 	{
 		$decBody = '';
 		
