@@ -23,6 +23,7 @@
 namespace Slice\Http;
 
 use Slice\Http\Exception\RuntimeException;
+use Slice\Http\ResponseAbstract;
 use Slice\Http\Response;
 
 /**
@@ -151,6 +152,12 @@ class Client
 	 * @var boolean
 	 */
 	protected $noReset;
+	
+	/**
+	 * A custom response handler instance
+	 * @var \Slice\Http\ResponseAbstract
+	 */
+	protected $responseHandler = null;
 	
 	/**
 	 * The Constructor
@@ -500,6 +507,16 @@ class Client
 	}
 	
 	/**
+	 * Set a custom response handler class
+	 * 
+	 * @param ResponseAbstract $response
+	 */
+	public function setResponseHandler(ResponseAbstract $response)
+	{
+		$this->responseHandler = $response;
+	}
+	
+	/**
 	 * Send the HTTP request and return an HTTP response object
 	 * 
 	 * @param string $method
@@ -593,8 +610,12 @@ class Client
 		# Closing handle
 		curl_close($ch);
 		
-		# Generating response
-		$this->response = Response::fromString($response);
+		# Verifying if a custom response handler was set
+		if (!is_null($this->responseHandler)) {
+			$this->response = $this->responseHandler->fromString($response);
+		} else {
+			$this->response = Response::fromString($response);
+		}
 		
 		# Saving last instance in Client
 		$this->lastRequest = clone $this;
@@ -628,7 +649,6 @@ class Client
 		$this->dataRaw 	   = null;
 		$this->httpVersion = self::HTTP_1;
 		$this->curlOpts    = array();
-		$this->noReset 	   = false;
 		
 		return $this;
 	}

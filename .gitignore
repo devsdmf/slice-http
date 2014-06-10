@@ -3,3 +3,5 @@
 .settings/*
 tests/*
 .DS_Store
+main.php
+vendor/*

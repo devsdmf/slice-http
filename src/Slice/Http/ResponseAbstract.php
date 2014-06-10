@@ -646,7 +646,7 @@ abstract class ResponseAbstract
 	 * Create a new Response object from a string
 	 *
 	 * @param string $response
-	 * @return \Slice\Http\Response
+	 * @return \Slice\Http\AbstractResponse
 	 */
 	public static function fromString($response)
 	{
@@ -661,6 +661,11 @@ abstract class ResponseAbstract
 			return self::fromString($body);
 		}
 		
-		return new Response($code, $headers, $body, $version, $message);
+		return new static($code, $headers, $body, $version, $message);
+	}
+	
+	public static function getHandler()
+	{
+		return new static(204,array(),'','1.1');
 	}
 }
