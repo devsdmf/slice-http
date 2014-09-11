@@ -264,15 +264,13 @@ class Client
 				list($name, $value) = explode(':', $name, 2);
 			}
 			
-			$normalized_name = strtolower($name);
-			
 			if (is_null($value) || $value === false) {
-				unset($this->headers[$normalized_name]);
+				unset($this->headers[$name]);
 			} else {
 				if (is_string($value)) {
 					$value = trim($value);
 				}
-				$this->headers[$normalized_name] = $value;
+				$this->headers[$name] = $value;
 			}
 		}
 		
@@ -287,7 +285,6 @@ class Client
 	 */
 	public function getHeader($key)
 	{
-		$key = strtolower($key);
 		if (isset($this->headers[$key])) {
 			return $this->headers[$key];
 		} else {
